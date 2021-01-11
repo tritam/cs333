@@ -146,7 +146,8 @@ allocproc(void)
   p->context = (struct context*)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
-
+  
+  p->start_ticks = ticks;
   return p;
 }
 
@@ -561,7 +562,20 @@ procdumpP2P3P4(struct proc *p, char *state_string)
 void
 procdumpP1(struct proc *p, char *state_string)
 {
-  cprintf("TODO for Project 1, delete this line and implement procdumpP1() in proc.c to print a row\n");
+  char * display_zeroes = "";
+
+  int time_elapsed = ticks - (p->start_ticks);
+  int time_elapsed_ms = time_elapsed % 1000;
+  time_elapsed /= 1000;
+
+  if(time_elapsed_ms < 100 && time_elapsed_ms >= 10) 
+    display_zeroes = "00";
+
+  else if(time_elapsed_ms < 10)
+    display_zeroes = "0";
+
+  cprintf("%d\t%s\t%d.%s%d\t%s\t", p->pid, p->name, time_elapsed, display_zeroes, time_elapsed_ms, state_string);
+
   return;
 }
 #endif
@@ -579,7 +593,7 @@ procdump(void)
 #elif defined(CS333_P2)
 #define HEADER "\nPID\tName         UID\tGID\tPPID\tElapsed\tCPU\tState\tSize\t PCs\n"
 #elif defined(CS333_P1)
-#define HEADER "\nPID\tName         Elapsed\tState\tSize\t PCs\n"
+#define HEADER "\nPID\tName\tElapsed\tState\t Size\t  PCs\n"
 #else
 #define HEADER "\n"
 #endif

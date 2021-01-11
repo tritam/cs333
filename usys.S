@@ -30,3 +30,6 @@ SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(halt)
+
+//additional system calls
+SYSCALL(date)
